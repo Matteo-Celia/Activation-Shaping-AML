@@ -35,13 +35,17 @@ class ASHResNet18(nn.Module):
         super(ASHResNet18, self).__init__()
         self.resnet = resnet18(weights=ResNet18_Weights)
         self.resnet.fc = nn.Linear(self.resnet.fc.in_features, 7)
+
         self.hooks = []
+        self.initialize_hooks()
+    
+    def initialize_hooks(self):
         # To register the forward hooks --
         for module in self.resnet.modules():
             if isinstance(module, nn.Conv2d):
                 hook = module.register_forward_hook(activation_shaping_hook)
                 self.hooks.append(hook)
-    
+
     def remove_hooks(self):
 
         # Remove registered hooks
@@ -49,7 +53,6 @@ class ASHResNet18(nn.Module):
             hook.remove()
 
     def forward(self, x):
-        self.resnet(x)
-#        ...
-#
+        return self.resnet(x)
+
 ######################################################
