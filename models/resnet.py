@@ -19,7 +19,14 @@ class BaseResNet18(nn.Module):
 # OR as a function that shall be hooked via 'register_forward_hook'
 #def activation_shaping_hook(module, input, output):
 #...
+def activation_shaping_hook(module, input, output):
+        
+        #new_output = output * torch.rand_like(output)
 
+        #with probability 0.5 assing 0 or 1 to the mask and then multiply it position-wise for the output tensor 
+        new_output = output * torch.where(torch.rand_like(output) < 0.5, 0.0, 1.0) 
+        
+        return new_output
 #
 ######################################################
 # TODO: modify 'BaseResNet18' including the Activation Shaping Module
@@ -32,17 +39,8 @@ class ASHResNet18(nn.Module):
         # To register the forward hooks --
         for module in self.resnet.modules():
             if isinstance(module, nn.Conv2d):
-                hook = module.register_forward_hook(self.activation_shaping_hook)
+                hook = module.register_forward_hook(activation_shaping_hook)
                 self.hooks.append(hook)
-
-    def activation_shaping_hook(self, module, input, output):
-        
-        #new_output = output * torch.rand_like(output)
-
-        #with probability 0.5 assing 0 or 1 to the mask and then multiply it position-wise for the output tensor 
-        new_output = output * torch.where(torch.rand_like(output) < 0.5, 0.0, 1.0) 
-        
-        return new_output
     
     def remove_hooks(self):
 
