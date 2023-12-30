@@ -12,7 +12,7 @@ import numpy as np
 from parse_args import parse_arguments
 
 from dataset import PACS
-from models.resnet import BaseResNet18, ASHResNet18, activation_shaping_hook
+from models.resnet import BaseResNet18, ASHResNet18
 
 from globals import CONFIG
 
@@ -72,6 +72,7 @@ def train(model, data):
                 elif CONFIG.experiment in ['ASM']:
                     x, y = batch
                     x, y = x.to(CONFIG.device), y.to(CONFIG.device)
+                    loss = F.cross_entropy(model(x), y)
                 ######################################################
 
             # Optimization step
@@ -110,39 +111,9 @@ def main():
     ######################################################
     #elif... TODO: Add here model loading for the other experiments (eg. DA and optionally DG)
     elif CONFIG.experiment in ['ASM']:
-        model = nn.Sequential(
-            nn.Conv2d(3, 8, 2),
-            # print(o)
-            nn.ReLU(),
-            nn.Conv2d(8, 8, 1),
-            # print(o)
-            nn.ReLU(),
-            nn.Flatten(),
-            nn.Linear(7688, 7) # Classifier
-        )
-
-        x = torch.rand((4, 3, 32, 32)) # Input
-
-        print('output1:', model(x).sum())
-
-        hooks = []
-        for layer in model.modules():
-            if isinstance(layer, nn.Conv2d):
-                hooks.append(layer.register_forward_hook(activation_shaping_hook))
-
-        print('output2:', model(x).sum())
-
-        for h in hooks:
-            h.remove()
-
-        print('output3:', model(x).sum())
-
-        #model = ASHResNet18()
-        #model.cuda()
-        # To register the forward hook --
-        #for layer in model.modules():
-        #    if isinstance(layer, nn.Conv2d):
-        #        layer.register_forward_hook(activation_shaping_hook)
+        
+        model = ASHResNet18()
+        
     ######################################################
     
     model.to(CONFIG.device)
@@ -151,7 +122,9 @@ def main():
         train(model, data)
     else:
         evaluate(model, data['test'])
-    
+        
+    if CONFIG.experiment in ['ASM']:
+        model.remove_hooks()
 
 if __name__ == '__main__':
     warnings.filterwarnings('ignore', category=UserWarning)
