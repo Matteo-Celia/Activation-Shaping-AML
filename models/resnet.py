@@ -19,12 +19,17 @@ class BaseResNet18(nn.Module):
 # OR as a function that shall be hooked via 'register_forward_hook'
 #def activation_shaping_hook(module, input, output):
 #...
+def activation_shaping_hook(module, input, output):
+    #print(f'{type(module)} - {output.abs().sum()}', end='\t')
+    output = output * torch.where(torch.rand_like(output) < 0.5, 0.0, 1.0) 
+    #print(f'{output.abs().sum()}')
+    return output
 #
 ######################################################
 # TODO: modify 'BaseResNet18' including the Activation Shaping Module
-#class ASHResNet18(nn.Module):
-#    def __init__(self):
-#        super(ASHResNet18, self).__init__()
+class ASHResNet18(nn.Module):
+    def __init__(self):
+        super(ASHResNet18, self).__init__()
 #        ...
 #    
 #    def forward(self, x):
