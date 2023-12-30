@@ -29,7 +29,7 @@ def load_data():
     test_transform = get_transform(size=224, mean=mean, std=std, preprocess=False)
 
     # Load examples & create Dataset
-    if CONFIG.experiment in ['baseline','ASM']:
+    if CONFIG.experiment in ['baseline']:
         source_examples, target_examples = [], []
 
         # Load source
@@ -53,7 +53,27 @@ def load_data():
 
     ######################################################
     #elif... TODO: Add here how to create the Dataset object for the other experiments
+    elif CONFIG.experiment in ['ASM']:
+        source_examples, target_examples = [], []
 
+        # Load source
+        with open(os.path.join(CONFIG.dataset_args['root'], f"{CONFIG.dataset_args['source_domain']}.txt"), 'r') as f:
+            lines = f.readlines()
+        for line in lines:
+            line = line.strip().split()
+            path, label = line[0].split('/')[1:], int(line[1])
+            source_examples.append((os.path.join(CONFIG.dataset_args['root'], *path), label))
+
+        # Load target
+        with open(os.path.join(CONFIG.dataset_args['root'], f"{CONFIG.dataset_args['target_domain']}.txt"), 'r') as f:
+            lines = f.readlines()
+        for line in lines:
+            line = line.strip().split()
+            path, label = line[0].split('/')[1:], int(line[1])
+            target_examples.append((os.path.join(CONFIG.dataset_args['root'], *path), label))
+
+        train_dataset = BaseDataset(source_examples, transform=train_transform)
+        test_dataset = BaseDataset(target_examples, transform=test_transform)
 
     ######################################################
 
