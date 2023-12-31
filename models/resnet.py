@@ -37,14 +37,25 @@ class ASHResNet18(nn.Module):
         self.resnet.fc = nn.Linear(self.resnet.fc.in_features, 7)
 
         self.hooks = []
-        self.initialize_hooks()
+        self.initialize_hooks(True)
     
-    def initialize_hooks(self):
+    def initialize_hooks(self, penultimate=False):
         # To register the forward hooks --
-        for module in self.resnet.modules():
-            if isinstance(module, nn.Conv2d):
-                hook = module.register_forward_hook(activation_shaping_hook)
-                self.hooks.append(hook)
+        
+        if penultimate:
+            # Access the penultimate layer (before GAP) in ResNet18
+            penultimate_layer = list(self.resnet.children())[-3]  # Access the specific layer
+
+            # Register forward hook on the penultimate layer
+            self.hooks.append(penultimate_layer.register_forward_hook(activation_shaping_hook))
+        else:
+
+            for module in self.resnet.modules():
+                if isinstance(module, nn.Conv2d):
+                    hook = module.register_forward_hook(activation_shaping_hook)
+                    self.hooks.append(hook)
+
+        
 
     def remove_hooks(self):
 
