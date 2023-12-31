@@ -24,7 +24,7 @@ def activation_shaping_hook(module, input, output):
         #new_output = output * torch.rand_like(output)
 
         #with probability 0.5 assing 0 or 1 to the mask and then multiply it position-wise for the output tensor 
-        new_output = output * torch.where(torch.rand_like(output) < 0.5, 0.0, 1.0) 
+        new_output = output * torch.where(torch.rand_like(output) < 0.75, 0.0, 1.0) 
         
         return new_output
 #
@@ -41,7 +41,7 @@ class ASHResNet18(nn.Module):
     
     def initialize_hooks(self, penultimate=False):
         # To register the forward hooks --
-        
+
         if penultimate:
             # Access the penultimate layer (before GAP) in ResNet18
             penultimate_layer = list(self.resnet.children())[-3]  # Access the specific layer
