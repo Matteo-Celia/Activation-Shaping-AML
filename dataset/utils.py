@@ -43,6 +43,26 @@ class BaseDataset(Dataset):
 #        src_x = self.T(src_x)
 #        targ_x = self.T(targ_x)
 #        return src_x, src_y, targ_x
+    
+class DomainAdaptationDataset(Dataset):
+    def __init__(self, source_examples, target_examples, transform):
+        self.source_examples = source_examples
+        self.target_examples = target_examples
+        self.T = transform
+   
+    def __len__(self):
+        return len(self.source_examples)
+   
+    def __getitem__(self, index):
+        src_x, src_y = self.source_examples[index]
+        targ_x, _ = self.target_examples[index]
+
+        src_x=Image.open(src_x).convert('RGB')
+        targ_x=Image.open(targ_x).convert('RGB')
+        src_x = self.T(src_x)
+        targ_x = self.T(targ_x)
+        src_y = torch.tensor(src_y).long()
+        return src_x, src_y, targ_x
 
 # [OPTIONAL] TODO: modify 'BaseDataset' for the Domain Generalization setting. 
 # Hint: combine the examples from the 3 source domains into a single 'examples' list

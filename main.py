@@ -62,14 +62,14 @@ def train(model, data):
             # Compute loss
             with torch.autocast(device_type=CONFIG.device, dtype=torch.float16, enabled=True):
 
-                if CONFIG.experiment in ['baseline']:
+                if CONFIG.experiment in ['baseline','ASM']:
                     x, y = batch
                     x, y = x.to(CONFIG.device), y.to(CONFIG.device)
                     loss = F.cross_entropy(model(x), y)
 
                 ######################################################
                 #elif... TODO: Add here train logic for the other experiments
-                elif CONFIG.experiment in ['ASM']:
+                elif CONFIG.experiment in ['DA']:
                     x, y = batch
                     x, y = x.to(CONFIG.device), y.to(CONFIG.device)
                     loss = F.cross_entropy(model(x), y)
@@ -110,10 +110,10 @@ def main():
 
     ######################################################
     #elif... TODO: Add here model loading for the other experiments (eg. DA and optionally DG)
-    elif CONFIG.experiment in ['ASM']:
+    elif CONFIG.experiment in ['ASM','DA']:
         
         model = ASHResNet18()
-        
+        #initialize hooks after obtaining M
     ######################################################
     
     model.to(CONFIG.device)
@@ -123,7 +123,7 @@ def main():
     else:
         evaluate(model, data['test'])
         
-    if CONFIG.experiment in ['ASM']:
+    if CONFIG.experiment in ['ASM','DA']:
         model.remove_hooks()
 
 if __name__ == '__main__':
