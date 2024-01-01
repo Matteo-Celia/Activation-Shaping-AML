@@ -70,9 +70,12 @@ def train(model, data):
                 ######################################################
                 #elif... TODO: Add here train logic for the other experiments
                 elif CONFIG.experiment in ['DA']:
-                    x, y = batch
-                    x, y = x.to(CONFIG.device), y.to(CONFIG.device)
+                    x, y, x_targ = batch
+                    x, y, x_targ = x.to(CONFIG.device), y.to(CONFIG.device), x_targ.to(CONFIG.device)
+                    M = model.get_activation(x_targ)
+                    model.initialize_hooks(M)
                     loss = F.cross_entropy(model(x), y)
+                    model.remove_hooks()
                 ######################################################
 
             # Optimization step
@@ -113,7 +116,7 @@ def main():
     elif CONFIG.experiment in ['ASM','DA']:
         
         model = ASHResNet18()
-        #initialize hooks after obtaining M
+        
     ######################################################
     
     model.to(CONFIG.device)

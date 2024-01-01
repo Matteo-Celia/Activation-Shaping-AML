@@ -55,7 +55,8 @@ class DomainAdaptationDataset(Dataset):
    
     def __getitem__(self, index):
         src_x, src_y = self.source_examples[index]
-        targ_x, _ = self.target_examples[index]
+        #randomly sample 'target_examples' to obtain targ_x
+        targ_x, _ = random.choice(self.target_examples)
 
         src_x=Image.open(src_x).convert('RGB')
         targ_x=Image.open(targ_x).convert('RGB')

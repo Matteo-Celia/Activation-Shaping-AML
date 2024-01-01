@@ -28,11 +28,12 @@ def activation_shaping_hook(M, random=True):
         def hook_fn(module, input, output):
             #new_output = output * torch.rand_like(output)
             if random:
+                p=0.7
+                #with probability p assing 0 or 1 to the mask and then multiply it position-wise for the output tensor 
                 M=torch.where(torch.rand_like(output) < p, 0.0, 1.0) 
 
             M=binarize(M)
-            p=0.7
-            #with probability p assing 0 or 1 to the mask and then multiply it position-wise for the output tensor 
+            
             new_output = binarize(output) * M
             return new_output
         
@@ -48,7 +49,7 @@ class ASHResNet18(nn.Module):
 
         self.hooks = []
     
-    def initialize_hooks(self, M,penultimate=False):
+    def initialize_hooks(self, M,penultimate=True):
         # To register the forward hooks --
 
         if penultimate:
@@ -65,7 +66,22 @@ class ASHResNet18(nn.Module):
                     hook = module.register_forward_hook(activation_shaping_hook(M))
                     self.hooks.append(hook)
 
-        
+    def get_activation(self, input_data):
+        activations = []
+
+        def hook_fn(module, input, output):
+            activations.append( output.detach())
+
+        target_layer = list(self.resnet.children())[-3]
+        hook = target_layer.register_forward_hook(hook_fn)
+
+        # Forward pass to capture activations
+        self.resnet(input_data)
+
+        # Remove the hook
+        hook.remove()
+
+        return activations[0] if activations else None
 
     def remove_hooks(self):
 
