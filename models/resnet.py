@@ -76,7 +76,7 @@ class ASHResNet18(nn.Module):
         hook = target_layer.register_forward_hook(hook_fn)
 
         # Forward pass to capture activations
-        self.resnet(input_data)
+        self.resnet(input_data.unsqueeze(0))
 
         # Remove the hook
         hook.remove()
