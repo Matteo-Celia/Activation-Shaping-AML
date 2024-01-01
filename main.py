@@ -70,11 +70,12 @@ def train(model, data):
                 ######################################################
                 #elif... TODO: Add here train logic for the other experiments
                 elif CONFIG.experiment in ['DA']:
+                    print(len(batch))
                     x, y, x_targ = batch
                     x, y, x_targ = x.to(CONFIG.device), y.to(CONFIG.device), x_targ.to(CONFIG.device)
                     M = model.get_activation(x_targ[0])
                     model.initialize_hooks(M)
-                    loss = F.cross_entropy(model(x), y.to(torch.float32))
+                    loss = F.cross_entropy(model(x).float(), y.to(torch.float32))
                     model.remove_hooks()
                 ######################################################
 
