@@ -90,6 +90,7 @@ class ASHResNet18(nn.Module):
             hook.remove()
 
     def forward(self, x):
+
         return self.resnet(x)
 
 ######################################################
