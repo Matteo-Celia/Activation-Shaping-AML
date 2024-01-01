@@ -74,7 +74,7 @@ def train(model, data):
                     x, y, x_targ = x.to(CONFIG.device), y.to(CONFIG.device), x_targ.to(CONFIG.device)
                     M = model.get_activation(x_targ[0])
                     model.initialize_hooks(M)
-                    loss = F.cross_entropy(model(x), y)
+                    loss = F.cross_entropy(model(x), y.to(torch.float32))
                     model.remove_hooks()
                 ######################################################
 
