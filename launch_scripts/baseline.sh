@@ -6,5 +6,5 @@ python main.py \
 --experiment_name=${exp}/${target_domain}/ \
 --dataset_args="{'root': 'data/PACS', 'source_domain': 'art_painting', 'target_domain': '${target_domain}'}" \
 --batch_size=256 \
---num_workers=5 \
+--num_workers=2 \
 --grad_accum_steps=1
