@@ -31,7 +31,7 @@ def activation_shaping_hook(Mt, random=False):
                 p=0.7
                 #with probability p assing 0 or 1 to the mask and then multiply it position-wise for the output tensor 
                 M_rand=torch.where(torch.rand_like(output) < p, 0.0, 1.0) 
-                
+                M=M_rand
             else:
 
                 M=binarize(Mt)
