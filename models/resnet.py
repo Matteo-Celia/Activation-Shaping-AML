@@ -23,16 +23,18 @@ def binarize(input_tensor):
     binarized_tensor = torch.where(input_tensor <= 0, torch.tensor(0.1), torch.tensor(1))
     return binarized_tensor
 
-def activation_shaping_hook(M, random=True):
+def activation_shaping_hook(Mt, random=False):
         
         def hook_fn(module, input, output):
             #new_output = output * torch.rand_like(output)
             if random:
                 p=0.7
                 #with probability p assing 0 or 1 to the mask and then multiply it position-wise for the output tensor 
-                M=torch.where(torch.rand_like(output) < p, 0.0, 1.0) 
+                M_rand=torch.where(torch.rand_like(output) < p, 0.0, 1.0) 
+                
+            else:
 
-            M=binarize(M)
+                M=binarize(Mt)
             
             new_output = binarize(output) * M
             new_output=new_output.to(torch.float32)
