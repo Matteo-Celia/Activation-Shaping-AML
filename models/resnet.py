@@ -35,26 +35,12 @@ def activation_shaping_hook(M, random=True):
             M=binarize(M)
             
             new_output = binarize(output) * M
+            new_output=new_output.to(torch.float32)
             return new_output
         
         return hook_fn
 
-def get_activation(model, input_data):
-        activations = []
 
-        def hook_fn(module, input, output):
-            activations.append( output.detach())
-
-        target_layer = list(model.children())[-3]
-        hook = target_layer.register_forward_hook(hook_fn)
-
-        # Forward pass to capture activations
-        self.resnet(input_data.unsqueeze(0))
-
-        # Remove the hook
-        hook.remove()
-
-        return activations[0] if activations else None
 #
 ######################################################
 # TODO: modify 'BaseResNet18' including the Activation Shaping Module
@@ -83,7 +69,23 @@ class ASHResNet18(nn.Module):
                     hook = module.register_forward_hook(activation_shaping_hook(M))
                     self.hooks.append(hook)
 
+    def get_activation(self,input_data):
+        activations = []
 
+        def hook_fn(module, input, output):
+            activations.append( output.detach())
+
+        target_layer = list(self.resnet.children())[-3]
+        hook = target_layer.register_forward_hook(hook_fn)
+
+        # Forward pass to capture activations
+        self.resnet(input_data.unsqueeze(0))
+
+        # Remove the hook
+        hook.remove()
+
+        return activations[0] if activations else None
+    
     def remove_hooks(self):
 
         # Remove registered hooks
