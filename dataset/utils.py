@@ -60,8 +60,8 @@ class DomainAdaptationDataset(Dataset):
 
         src_x=Image.open(src_x).convert('RGB')
         targ_x=Image.open(targ_x).convert('RGB')
-        src_x = self.T(src_x)
-        targ_x = self.T(targ_x)
+        src_x = self.T(src_x).to(CONFIG.dtype)
+        targ_x = self.T(targ_x).to(CONFIG.dtype)
         src_y = torch.tensor(src_y).long()
         return src_x, src_y, targ_x
 
