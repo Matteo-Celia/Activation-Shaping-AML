@@ -85,7 +85,7 @@ class ASHResNet18(nn.Module):
         else:
             for module in self.resnet.modules():
                 if isinstance(module, nn.Conv2d):
-                    hook = module.register_forward_hook(hook_fn())
+                    hook = module.register_forward_hook(hook_fn)
                     hooks.append(hook)
         # Forward pass to capture activations
         self.resnet(input_data.unsqueeze(0))
