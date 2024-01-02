@@ -77,7 +77,7 @@ def train(model, data):
                     M = model.get_activation(x_targ[0])
                     model.initialize_hooks(M)
                     
-                    loss = F.cross_entropy(model(x).float(), y.to(torch.torch.int64))
+                    loss = F.cross_entropy(model(x), y)
                     
                 ######################################################
 

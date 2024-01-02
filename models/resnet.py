@@ -54,7 +54,7 @@ class ASHResNet18(nn.Module):
 
         self.hooks = []
     
-    def initialize_hooks(self, M,penultimate=True):
+    def initialize_hooks(self, M,penultimate=False):
         # To register the forward hooks --
 
         if penultimate:
@@ -65,28 +65,36 @@ class ASHResNet18(nn.Module):
             hook=penultimate_layer.register_forward_hook(activation_shaping_hook(M))
             self.hooks.append(hook)
         else:
-
+            i=0
             for module in self.resnet.modules():
                 if isinstance(module, nn.Conv2d):
-                    hook = module.register_forward_hook(activation_shaping_hook(M))
+                    hook = module.register_forward_hook(activation_shaping_hook(M[i]))
+                    i+=1
                     self.hooks.append(hook)
 
-    def get_activation(self,input_data):
+    def get_activation(self,input_data, penultimate=False):
         activations = []
+        hooks=[]
 
         def hook_fn(module, input, output):
             activations.append( output.detach())
 
-        target_layer = list(self.resnet.children())[-3]
-        hook = target_layer.register_forward_hook(hook_fn)
-
+        if penultimate:
+            target_layer = list(self.resnet.children())[-3]
+            hook = target_layer.register_forward_hook(hook_fn)
+        else:
+            for module in self.resnet.modules():
+                if isinstance(module, nn.Conv2d):
+                    hook = module.register_forward_hook(hook_fn())
+                    hooks.append(hook)
         # Forward pass to capture activations
         self.resnet(input_data.unsqueeze(0))
 
-        # Remove the hook
-        hook.remove()
+        # Remove the hooks
+        for hook in hooks:
+            hook.remove()
 
-        return activations[0] if activations else None
+        return activations if activations else None
     
     def remove_hooks(self):
 
