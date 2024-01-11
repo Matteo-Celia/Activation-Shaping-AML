@@ -110,7 +110,7 @@ class ASHResNet18(nn.Module):
     else:
 
         def forward(self, x):
-            
+            print(x.shape,x.dtype)
             return self.resnet(x)
 
 ######################################################

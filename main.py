@@ -64,7 +64,7 @@ def train(model, data):
 
                 if CONFIG.experiment in ['baseline','ASM']:
                     x, y = batch
-                    print(x.shape,x.dtype)
+                    
                     x, y = x.to(CONFIG.device), y.to(CONFIG.device)
                     loss = F.cross_entropy(model(x), y)
 
