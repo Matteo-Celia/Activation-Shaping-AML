@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torchvision.models import resnet18, ResNet18_Weights
+from globals import CONFIG
 
 class BaseResNet18(nn.Module):
     def __init__(self):
@@ -101,9 +102,15 @@ class ASHResNet18(nn.Module):
         # Remove registered hooks
         for hook in self.hooks:
             hook.remove()
+    
+    if CONFIG.experiment in ['DA']:
 
-    def forward(self, x):
+        def forward(self, x, x_targ):
+            return self.resnet(x)
+    else:
 
-        return self.resnet(x)
+        def forward(self, x):
+            
+            return self.resnet(x)
 
 ######################################################
