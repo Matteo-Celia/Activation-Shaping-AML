@@ -105,7 +105,8 @@ class ASHResNet18(nn.Module):
     
     
     def forward(self, x, x_targ):
-        Mt=self.get_activation(x_targ)
+        Mt=self.get_activation(x_targ,True)
+        print(Mt.shape)
         self.initialize_hooks(Mt)
         return self.resnet(x)
     
