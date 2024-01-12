@@ -60,7 +60,7 @@ class ASHResNet18(nn.Module):
 
         if penultimate:
             # Access the penultimate layer (before GAP) in ResNet18
-            penultimate_layer = list(self.resnet.modules())[-3]  # Access the specific layer
+            penultimate_layer = list(self.resnet.modules())[-4]  # Access the specific layer
 
             # Register forward hook on the penultimate layer
             hook=penultimate_layer.register_forward_hook(activation_shaping_hook(M))
@@ -81,7 +81,7 @@ class ASHResNet18(nn.Module):
             activations.append( output.detach())
 
         if penultimate:
-            target_layer = list(self.resnet.modules())[-3]
+            target_layer = list(self.resnet.modules())[-4]
             hook = target_layer.register_forward_hook(hook_fn)
             hooks.append(hook)
         else:
