@@ -104,10 +104,10 @@ class ASHResNet18(nn.Module):
             hook.remove()
     
     
-    def forward(self, x, x_targ):
-        Mt=self.get_activation(x_targ,True)
-        print(Mt.shape)
-        self.initialize_hooks(Mt)
+    def forward(self, x, x_targ=None):
+        if x_targ:
+            Mt=self.get_activation(x_targ,True)
+            self.initialize_hooks(Mt)
         return self.resnet(x)
     
 
