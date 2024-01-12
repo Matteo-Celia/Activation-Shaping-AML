@@ -96,7 +96,7 @@ class ASHResNet18(nn.Module):
         for hook in hooks:
             hook.remove()
 
-        return activations if activations else None
+        return activations[0] if activations else None
     
     def remove_hooks(self):
 
