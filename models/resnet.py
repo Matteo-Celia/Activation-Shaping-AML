@@ -103,15 +103,14 @@ class ASHResNet18(nn.Module):
         for hook in self.hooks:
             hook.remove()
     
-    if CONFIG.experiment in ['DA']:
+    
+    def forward(self, x, x_targ):
+        Mt=self.get_activation(x_targ)
+        self.initialize_hooks(Mt)
+        return self.resnet(x)
+    
 
-        def forward(self, x, x_targ):
-            Mt=self.get_activation(x_targ)
-            self.initialize_hooks(Mt)
-            return self.resnet(x)
-    else:
-
-        def forward(self, x):
-            return self.resnet(x)
+        # def forward(self, x):
+        #     return self.resnet(x)
 
 ######################################################
