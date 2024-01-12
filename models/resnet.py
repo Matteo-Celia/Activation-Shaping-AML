@@ -96,7 +96,7 @@ class ASHResNet18(nn.Module):
         for hook in hooks:
             hook.remove()
 
-        return activations[0] if activations else None
+        return activations if activations else None
     
     def remove_hooks(self):
 
@@ -107,8 +107,8 @@ class ASHResNet18(nn.Module):
     
     def forward(self, x, x_targ=None):
         if x_targ is not None:
-            Mt=self.get_activation(x_targ,True)
-            self.initialize_hooks(Mt)
+            Mt=self.get_activation(x_targ)
+            self.initialize_hooks(Mt,False)
         return self.resnet(x)
     
 
