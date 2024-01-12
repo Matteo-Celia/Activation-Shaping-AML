@@ -64,7 +64,6 @@ def train(model, data):
 
                 if CONFIG.experiment in ['baseline','ASM']:
                     x, y = batch
-                    
                     x, y = x.to(CONFIG.device), y.to(CONFIG.device)
                     loss = F.cross_entropy(model(x), y)
 
@@ -78,8 +77,8 @@ def train(model, data):
                     # M = model.get_activation(x_targ[0])
                     # model.initialize_hooks(M)
                     
-                    loss = F.cross_entropy(model(x,x_targ), y) #model(x,x_targ) forward
-                    
+                    loss = F.cross_entropy(model(x,x_targ), y) 
+                    model.remove_hooks()
                 ######################################################
 
             # Optimization step

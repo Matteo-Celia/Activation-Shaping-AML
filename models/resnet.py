@@ -55,7 +55,7 @@ class ASHResNet18(nn.Module):
 
         self.hooks = []
     
-    def initialize_hooks(self, M,penultimate=False):
+    def initialize_hooks(self, M,penultimate=True):
         # To register the forward hooks --
 
         if penultimate:
@@ -89,13 +89,13 @@ class ASHResNet18(nn.Module):
                     hook = module.register_forward_hook(hook_fn)
                     hooks.append(hook)
         # Forward pass to capture activations
-        self.resnet(input_data.unsqueeze(0))
+        self.resnet(input_data)
 
         # Remove the hooks
         for hook in hooks:
             hook.remove()
 
-        return activations if activations else None
+        return activations[0] if activations else None
     
     def remove_hooks(self):
 
@@ -106,11 +106,12 @@ class ASHResNet18(nn.Module):
     if CONFIG.experiment in ['DA']:
 
         def forward(self, x, x_targ):
+            Mt=self.get_activation(x_targ)
+            self.initialize_hooks(Mt)
             return self.resnet(x)
     else:
 
         def forward(self, x):
-            print(x.shape,x.dtype)
             return self.resnet(x)
 
 ######################################################
