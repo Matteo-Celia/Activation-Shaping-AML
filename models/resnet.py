@@ -21,7 +21,7 @@ class BaseResNet18(nn.Module):
 #def activation_shaping_hook(module, input, output):
 #...
 def binarize(input_tensor):
-    binarized_tensor = torch.where(input_tensor <= 0, torch.tensor(0), torch.tensor(1))
+    binarized_tensor = torch.where(input_tensor <= 0, torch.tensor(0.1), torch.tensor(1))
     return binarized_tensor
 
 def activation_shaping_hook(Mt, random=False):
