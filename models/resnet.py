@@ -21,7 +21,7 @@ class BaseResNet18(nn.Module):
 #def activation_shaping_hook(module, input, output):
 #...
 def binarize(input_tensor):
-    binarized_tensor = torch.where(input_tensor <= 0, torch.tensor(0), torch.tensor(1))
+    binarized_tensor = torch.where(input_tensor <= 0, torch.tensor(0.1), torch.tensor(1))
     return binarized_tensor
 
 def activation_shaping_hook(Mt, random=False):
@@ -60,7 +60,7 @@ class ASHResNet18(nn.Module):
 
         if penultimate:
             # Access the penultimate layer (before GAP) in ResNet18
-            target_layer = self.resnet.layer4[0].bn2 #self.resnet.layer4[0].bn1#list(self.resnet.modules())[-7]  # Access the specific layer
+            target_layer = self.resnet.layer4[0].bn1#list(self.resnet.modules())[-7]  # Access the specific layer
 
             # Register forward hook on the penultimate layer
             hook=target_layer.register_forward_hook(activation_shaping_hook(M))
@@ -81,7 +81,7 @@ class ASHResNet18(nn.Module):
             activations.append( output.detach())
 
         if penultimate:
-            target_layer = self.resnet.layer4[0].bn2 #self.resnet.layer4[0].bn1
+            target_layer =self.resnet.layer4[0].bn1
             hook = target_layer.register_forward_hook(hook_fn)
             hooks.append(hook)
         else:
