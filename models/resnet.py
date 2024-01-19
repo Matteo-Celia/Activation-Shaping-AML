@@ -107,12 +107,12 @@ class ASHResNet18(nn.Module):
     
     def forward(self, x, x_targ=None):
 
-        if CONFIG.experiment in ['ASM']:
+        if CONFIG.experiment in ['DA']:
             if x_targ is not None:
                 Mt=self.get_activation(x_targ)
                 self.initialize_hooks(Mt)
 
-        elif CONFIG.experiment in ['DA']:
+        elif CONFIG.experiment in ['ASM']:
             self.initialize_hooks()
 
         return self.resnet(x)
