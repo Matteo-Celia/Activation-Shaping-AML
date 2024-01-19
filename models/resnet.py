@@ -24,7 +24,7 @@ def binarize(input_tensor):
     binarized_tensor = torch.where(input_tensor <= 0, torch.tensor(0.1), torch.tensor(1))
     return binarized_tensor
 
-def activation_shaping_hook(Mt, random=False):
+def activation_shaping_hook(Mt=None, random=False):
         
         def hook_fn(module, input, output):
             #new_output = output * torch.rand_like(output)
@@ -55,15 +55,15 @@ class ASHResNet18(nn.Module):
 
         self.hooks = []
     
-    def initialize_hooks(self, M,penultimate=True):
+    def initialize_hooks(self, M=None,penultimate=True):
         # To register the forward hooks --
 
         if penultimate:
             # Access the penultimate layer (before GAP) in ResNet18
             target_layer = self.resnet.layer4[0].bn1#list(self.resnet.modules())[-7]  # Access the specific layer
-
+            random = CONFIG.experiment in ['ASM']
             # Register forward hook on the penultimate layer
-            hook=target_layer.register_forward_hook(activation_shaping_hook(M))
+            hook=target_layer.register_forward_hook(activation_shaping_hook(M,random))
             self.hooks.append(hook)
         else:
             i=0
@@ -106,9 +106,15 @@ class ASHResNet18(nn.Module):
     
     
     def forward(self, x, x_targ=None):
-        if x_targ is not None:
-            Mt=self.get_activation(x_targ)
-            self.initialize_hooks(Mt)
+
+        if CONFIG.experiment in ['ASM']:
+            if x_targ is not None:
+                Mt=self.get_activation(x_targ)
+                self.initialize_hooks(Mt)
+
+        elif CONFIG.experiment in ['DA']:
+            self.initialize_hooks()
+
         return self.resnet(x)
     
 
