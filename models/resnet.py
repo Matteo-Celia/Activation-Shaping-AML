@@ -28,16 +28,30 @@ def activation_shaping_hook(Mt=None, random=False):
         
         def hook_fn(module, input, output):
             #new_output = output * torch.rand_like(output)
-            if random:
+            if CONFIG.experiment in ['ASM']:
                 p=0.7
                 #with probability p assing 0 or 1 to the mask and then multiply it position-wise for the output tensor 
                 M_rand=torch.where(torch.rand_like(output) < p, 0.0, 1.0) 
                 M=M_rand
-            else:
+                new_output = binarize(output) * M
+
+            elif CONFIG.experiment in ['DA']:
 
                 M=binarize(Mt)
-                #dont binarize output too maybe
-            new_output = binarize(output) * M
+                new_output = binarize(output) * M
+
+            elif CONFIG.experiment in ['BA1']:
+                
+                new_output = output * Mt
+
+            elif CONFIG.experiment in ['BA2']:
+                k=5
+                M=binarize(Mt)
+                topk_values, topk_indices = torch.topk(output, k)
+                mask = torch.zeros_like(M)
+                mask[topk_indices] = 1.0
+                new_output = output * mask
+            
             new_output=new_output.to(torch.float32)
             return new_output
         
