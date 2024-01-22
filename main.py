@@ -62,7 +62,12 @@ def train(model, data):
             # Compute loss
             with torch.autocast(device_type=CONFIG.device, dtype=torch.float16, enabled=True):
 
-                if CONFIG.experiment in ['baseline','ASM']:
+                if CONFIG.experiment in ['baseline']:
+                    x, y = batch
+                    x, y = x.to(CONFIG.device), y.to(CONFIG.device)
+                    loss = F.cross_entropy(model(x), y)
+                    
+                elif CONFIG.experiment in ['ASM']:
                     x, y = batch
                     x, y = x.to(CONFIG.device), y.to(CONFIG.device)
                     loss = F.cross_entropy(model(x), y)
@@ -73,9 +78,6 @@ def train(model, data):
                     
                     x, y, x_targ = batch
                     x, y, x_targ = x.to(CONFIG.device), y.to(CONFIG.device), x_targ.to(CONFIG.device)
-                    # model.remove_hooks()
-                    # M = model.get_activation(x_targ[0])
-                    # model.initialize_hooks(M)
                     
                     loss = F.cross_entropy(model(x,x_targ), y) 
                     model.remove_hooks()
