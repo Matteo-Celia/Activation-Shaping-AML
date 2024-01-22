@@ -47,10 +47,15 @@ def activation_shaping_hook(Mt=None, random=False):
             elif CONFIG.experiment in ['BA2']:
                 k=5
                 M=binarize(Mt)
-                topk_values, topk_indices = torch.topk(output, k)
-                mask = torch.zeros_like(M)
+                #topk_values, topk_indices = torch.topk(output, k)
+                topk_values, topk_indices = torch.topk(output.view(-1), k)
+                mask = torch.zeros_like(M.view(-1))
                 mask[topk_indices] = 1.0
-                new_output = output * mask
+                mask = mask.view(M.shape)
+                #mask = torch.zeros_like(M)
+                #mask[topk_indices] = 1.0
+                M=M*mask
+                new_output = output * M
             
             new_output=new_output.to(torch.float32)
             return new_output
