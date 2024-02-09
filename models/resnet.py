@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torchvision.models import resnet18, ResNet18_Weights
+from globals import CONFIG
 
 ratio = 1
 
@@ -71,7 +72,24 @@ class DAResNet18(nn.Module):
                 print(f"asm_source_hook triggered for module: {module.__class__.__name__}")
                 print(f"actmaps length: {len(self.actmaps_target)}")
                 mask = self.actmaps_target.pop(0)
-                mask_bin = binarize(mask)
+
+                if CONFIG.experiment in ['DA-BA1']:
+                    # BA1 require to use the map without binarization
+                    mask_bin = mask
+                else:
+                    mask_bin = binarize(mask)
+
+                if CONFIG.experiment in ['DA-BA2']:
+
+                    k=5 # hyperparameter to tune
+                    #topk_values, topk_indices = torch.topk(output, k)
+                    topk_values, topk_indices = torch.topk(output.view(-1), k)
+                    mask_flatten = torch.zeros_like(mask_bin.view(-1))
+                    mask_flatten[topk_indices] = 1.0
+                    mask_topk = mask_flatten.view(mask_bin.shape)
+                    # multiply initial mask for topk mask
+                    mask_bin=mask_bin*mask_topk
+                    
                 output_bin = binarize(output)
                 output = output_bin * mask_bin
                 return output
