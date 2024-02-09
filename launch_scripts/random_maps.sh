@@ -1,7 +1,7 @@
 target_domain=${1}
 
 
-python Activation-Shaping-AML/main.py \
+python main.py \
 --experiment=random \
 --experiment_name=random/${target_domain}/ \
 --dataset_args="{'root': 'data/PACS', 'source_domain': 'art_painting', 'target_domain': '${target_domain}' }" \
