@@ -6,7 +6,7 @@ from globals import CONFIG
 ratio = 1
 
 def binarize(tensor):
-    return torch.where(tensor > 0, torch.tensor(1), torch.tensor(0.0))
+    return torch.where(tensor > 0, torch.tensor(1), torch.tensor(0.1))
 
 def register_forward_hooks(model, hook, layer_type, skip_step=None):
     hook_handles = []
