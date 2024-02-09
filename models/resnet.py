@@ -3,10 +3,10 @@ import torch.nn as nn
 from torchvision.models import resnet18, ResNet18_Weights
 from globals import CONFIG
 
-ratio = 1
+
 
 def binarize(tensor):
-    return torch.where(tensor > 0, torch.tensor(1), torch.tensor(0.1))
+    return torch.where(tensor > 0, torch.tensor(1), torch.tensor(0.0))
 
 def register_forward_hooks(model, hook, layer_type, skip_step=None):
     hook_handles = []
@@ -28,6 +28,7 @@ def remove_forward_hooks(hook_handles):
 
 def asm_hook(module, input, output):
     print(f"Activation hook triggered for module: {module.__class__.__name__}")
+    ratio = 1
     p = torch.full_like(output, ratio)
     mask = torch.bernoulli(p)
     mask_bin = binarize(mask)
