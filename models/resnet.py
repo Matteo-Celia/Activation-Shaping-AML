@@ -58,7 +58,8 @@ class DAResNet18(nn.Module):
         # unregister forward hooks
         if x_target is not None:
             self.forward_turn = 'target'
-            self.resnet(x_target)
+            with torch.no_grad():
+                self.resnet(x_target)
         self.forward_turn = 'source'
         return self.resnet(x_source)
     
@@ -66,7 +67,7 @@ class DAResNet18(nn.Module):
         if self.forward_turn == 'target':
             print(f"rec_actmaps_hook triggered for module: {module.__class__.__name__}")
             print(f"actmaps length: {len(self.actmaps_target)}")
-            self.actmaps_target.append(output.detach())
+            self.actmaps_target.append(output.clone().detach())
     
     def asm_source_hook(self, module, input, output):
             if self.forward_turn == 'source':
@@ -82,7 +83,7 @@ class DAResNet18(nn.Module):
 
                 if CONFIG.experiment in ['DA-BA2']:
 
-                    k=5 # hyperparameter to tune
+                    k=100 # hyperparameter to tune
                     #topk_values, topk_indices = torch.topk(output, k)
                     topk_values, topk_indices = torch.topk(output.view(-1), k)
                     mask_flatten = torch.zeros_like(mask_bin.view(-1))
