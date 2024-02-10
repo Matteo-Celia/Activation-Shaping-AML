@@ -48,7 +48,7 @@ def load_data():
     test_transform = get_transform(size=224, mean=mean, std=std, preprocess=False)
 
     # Load examples & create Dataset
-    if CONFIG.experiment in ['baseline', 'random', 'domain_adaptation']:
+    if CONFIG.experiment in ['baseline', 'random', 'domain_adaptation','DA-BA1','DA-BA2']:
         source_examples, target_examples = [], []
 
         # Load source
@@ -76,7 +76,7 @@ def load_data():
 
 
     ######################################################
-        elif CONFIG.experiment in ['domain_adaptation']:
+        elif CONFIG.experiment in ['domain_adaptation','DA-BA1','DA-BA2']:
             train_dataset = DomainAdaptationDataset(source_examples, target_examples, transform=train_transform)
             test_dataset = BaseDataset(target_examples, transform=test_transform)
 

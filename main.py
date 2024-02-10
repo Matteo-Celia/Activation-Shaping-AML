@@ -68,7 +68,7 @@ def train(model: BaseResNet18, data):
             hook_handles = []
             #hook_handles = register_forward_hooks(model, asm_hook, nn.ReLU) 
             hook_handles.append(model.resnet.layer1[0].relu.register_forward_hook(asm_hook))  
-        elif CONFIG.experiment in ['domain_adaptation']:
+        elif CONFIG.experiment in ['domain_adaptation','DA-BA1','DA-BA2']:
             hook_handles = []
             #hook_handles = register_forward_hooks(model, model.rec_actmaps_hook, nn.Conv2d)
             #hook_handles += register_forward_hooks(model, model.asm_source_hook, nn.Conv2d)
@@ -88,7 +88,7 @@ def train(model: BaseResNet18, data):
                 ######################################################
                 #elif... TODO: Add here train logic for the other experiments
                 ######################################################
-                elif CONFIG.experiment in ['domain_adaptation']:
+                elif CONFIG.experiment in ['domain_adaptation','DA-BA1','DA-BA2']:
                     x_source, y_source, x_target = batch
                     x_source, y_source, x_target = x_source.to(CONFIG.device), y_source.to(CONFIG.device), \
                                                     x_target.to(CONFIG.device)
@@ -124,7 +124,7 @@ def train(model: BaseResNet18, data):
         scheduler.step()
 
         # Detach hooks
-        if CONFIG.experiment in ['random', 'domain_adaptation']:
+        if CONFIG.experiment in ['random', 'domain_adaptation','DA-BA1','DA-BA2']:
             remove_forward_hooks(hook_handles)
         
         # Test current epoch
@@ -155,7 +155,7 @@ def main():
 
     ######################################################
         
-    elif CONFIG.experiment in ['domain_adaptation']:
+    elif CONFIG.experiment in ['domain_adaptation','DA-BA1','DA-BA2']:
         model = DAResNet18()
     elif CONFIG.experiment in ['domain_generalization']:
         model = DGResNet18()
