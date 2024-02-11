@@ -65,7 +65,9 @@ class DAResNet18(nn.Module):
         self.forward_turn = 'source'
 
         with autocast(enabled=True):
-            return self.resnet(x_source)
+            z= self.resnet(x_source)
+            print('z {}'.format(z.requires_grad))
+            return z
     
     def rec_actmaps_hook(self, module, input, output):
         if self.forward_turn == 'target':
