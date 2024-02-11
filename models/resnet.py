@@ -56,14 +56,16 @@ class DAResNet18(nn.Module):
         # unregister other forward hooks
         # register forward hooks
         # unregister forward hooks
-        if x_target is not None:
-            self.forward_turn = 'target'
-            with torch.autocast(device_type=CONFIG.device,enabled=True):
+        with torch.autocast(device_type=CONFIG.device,enabled=False):
+
+            if x_target is not None:
+                self.forward_turn = 'target'
+                
                 with torch.no_grad():
                     self.resnet(x_target)
-        self.forward_turn = 'source'
+            self.forward_turn = 'source'
 
-        with torch.autocast(device_type=CONFIG.device,enabled=True):
+        
             z= self.resnet(x_source)
             print('z {}'.format(z.requires_grad))
             return z
