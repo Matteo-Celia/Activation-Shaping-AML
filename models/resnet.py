@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torch.cuda.amp import autocast
 from torchvision.models import resnet18, ResNet18_Weights
 from globals import CONFIG
 
@@ -58,12 +59,13 @@ class DAResNet18(nn.Module):
         # unregister forward hooks
         if x_target is not None:
             self.forward_turn = 'target'
-            with torch.no_grad():
-                self.resnet(x_target)
+            with autocast(enabled=True):
+                with torch.no_grad():
+                    self.resnet(x_target)
         self.forward_turn = 'source'
 
-       
-        return self.resnet(x_source)
+        with autocast(enabled=True):
+            return self.resnet(x_source)
     
     def rec_actmaps_hook(self, module, input, output):
         if self.forward_turn == 'target':
