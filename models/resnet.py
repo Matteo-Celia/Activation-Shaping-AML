@@ -55,6 +55,7 @@ class DAResNet18(nn.Module):
     def forward_target(self,x):
         with torch.no_grad():
             y= self.resnet(x)
+            return y
 
     def forward(self, x_source, x_target=None):
         # unregister other forward hooks
