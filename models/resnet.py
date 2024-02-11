@@ -65,7 +65,7 @@ class DAResNet18(nn.Module):
 
         if x_target is not None:
             self.forward_turn = 'target'
-            with torch.autocast(device_type=CONFIG.device,enabled=True):
+            with torch.autocast(device_type=CONFIG.device,enabled=False):
                 
                 x=self.forward_target(x_target)
                 print('x {}'.format(x.requires_grad))
