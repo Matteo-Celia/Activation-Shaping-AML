@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from torch.cuda.amp import autocast
 from torchvision.models import resnet18, ResNet18_Weights
 from globals import CONFIG
 
@@ -59,12 +58,12 @@ class DAResNet18(nn.Module):
         # unregister forward hooks
         if x_target is not None:
             self.forward_turn = 'target'
-            with autocast(enabled=True):
+            with torch.autocast(enabled=True):
                 with torch.no_grad():
                     self.resnet(x_target)
         self.forward_turn = 'source'
 
-        with autocast(enabled=True):
+        with torch.autocast(enabled=True):
             z= self.resnet(x_source)
             print('z {}'.format(z.requires_grad))
             return z
