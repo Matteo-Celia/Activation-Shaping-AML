@@ -93,7 +93,7 @@ class DAResNet18(nn.Module):
                     mask_bin=mask_bin*mask_topk
                     
                 output_bin = binarize(output)
-                output = output_bin * mask_bin
+                output = output * mask_bin
                 return output
             
 class DGResNet18(nn.Module):
