@@ -61,9 +61,9 @@ class DAResNet18(nn.Module):
             with torch.no_grad():
                 self.resnet(x_target)
         self.forward_turn = 'source'
-        
-        with torch.autograd.grad_mode(True):
-            return self.resnet(x_source)
+
+       
+        return self.resnet(x_source)
     
     def rec_actmaps_hook(self, module, input, output):
         if self.forward_turn == 'target':
