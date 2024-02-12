@@ -79,7 +79,7 @@ class DAResNet18(nn.Module):
         if self.forward_turn == 'target':
             print(f"rec_actmaps_hook triggered for module: {module.__class__.__name__}")
             print(f"actmaps length: {len(self.actmaps_target)}")
-            self.actmaps_target.append(output.clone().detach())
+            self.actmaps_target.append(output.detach()) #.clone()
     
     def asm_source_hook(self, module, input, output):
             if self.forward_turn == 'source':
