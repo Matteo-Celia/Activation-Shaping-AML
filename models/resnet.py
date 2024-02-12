@@ -52,23 +52,24 @@ class DAResNet18(nn.Module):
         self.actmaps_target = []
         self.forward_turn = 'target'
     
+    def forward_target(self, x_target):
+        with torch.autocast(device_type=CONFIG.device,enabled=False):
+            with torch.no_grad():
+                x=self.resnet(x_target)
 
     def forward(self, x_source, x_target=None):
         # unregister other forward hooks
         # register forward hooks
         # unregister forward hooks
-        #with torch.autocast(device_type=CONFIG.device,enabled=False):
-
-        if x_target is not None:
-            self.forward_turn = 'target'
-            with torch.autocast(device_type=CONFIG.device,enabled=True):
-                
-                x=self.resnet(x_target)
-                print('x {}'.format(x.requires_grad))
-                
-        self.forward_turn = 'source'
-
         with torch.autocast(device_type=CONFIG.device,enabled=False):
+
+            #if x_target is not None:
+            #    self.forward_turn = 'target'
+                
+                #x=self.resnet(x_target)
+                #print('x {}'.format(x.requires_grad))                  
+            self.forward_turn = 'source'
+
             z= self.resnet(x_source)
             print('z {}'.format(z.requires_grad))
             return z
