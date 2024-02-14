@@ -87,11 +87,7 @@ class DAResNet18(nn.Module):
                 print(f"actmaps length: {len(self.actmaps_target)}")
                 mask = self.actmaps_target.pop(0)
 
-                if CONFIG.experiment in ['DA-BA1']:
-                    # BA1 require to use the map without binarization
-                    mask_bin = mask
-                else:
-                    mask_bin = binarize(mask)
+                mask_bin = binarize(mask)
 
                 if CONFIG.experiment in ['DA-BA2']:
 
