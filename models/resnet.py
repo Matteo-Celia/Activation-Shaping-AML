@@ -70,7 +70,7 @@ class DAResNet18(nn.Module):
                 #x=self.resnet(x_target)
                 #print('x {}'.format(x.requires_grad))                  
             self.forward_turn = 'source'
-
+            print(len(self.actmaps_target),x_source.shape)
             z= self.resnet(x_source)
             print('z {}'.format(z.requires_grad))
             return z
@@ -138,7 +138,7 @@ class DGResNet18(nn.Module):
         mask2 = (self.actmaps2.pop(0) > 0).float()
         mask3 = (self.actmaps3.pop(0) > 0).float()
         output_bin = (output > 0).float()
-        mask = torch.cat((mask1, mask2, mask3))
+        mask = torch.cat((mask1, mask2, mask3)) #should be multiplication
         return mask * output_bin
 
 
