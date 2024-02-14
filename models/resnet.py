@@ -19,7 +19,7 @@ def register_forward_hooks(model, hook, layer_type, skip_step=None):
                 if layer_count % skip_step == 0:
                     hook_handles.append(layer.register_forward_hook(hook))
                 layer_count += 1
-    print(f'Registered {len(hook_handles)} forward hooks to {layer_type}')
+    #print(f'Registered {len(hook_handles)} forward hooks to {layer_type}')
     return hook_handles
 
 def remove_forward_hooks(hook_handles):
@@ -27,13 +27,13 @@ def remove_forward_hooks(hook_handles):
         hook.remove()
 
 def asm_hook(module, input, output):
-    print(f"Activation hook triggered for module: {module.__class__.__name__}")
+    #print(f"Activation hook triggered for module: {module.__class__.__name__}")
     ratio = 0.50
     p = torch.full_like(output, ratio)
     mask = torch.bernoulli(p)
     mask_bin = binarize(mask)
-    output_bin = binarize(mask)
-    return output * mask_bin
+    output_bin = binarize(output)
+    return output_bin * mask_bin
 
 class BaseResNet18(nn.Module):
     def __init__(self):
@@ -77,14 +77,14 @@ class DAResNet18(nn.Module):
     
     def rec_actmaps_hook(self, module, input, output):
         if self.forward_turn == 'target':
-            print(f"rec_actmaps_hook triggered for module: {module.__class__.__name__}")
-            print(f"actmaps length: {len(self.actmaps_target)}")
+            #print(f"rec_actmaps_hook triggered for module: {module.__class__.__name__}")
+            #print(f"actmaps length: {len(self.actmaps_target)}")
             self.actmaps_target.append(output.detach()) #.clone()
     
     def asm_source_hook(self, module, input, output):
             if self.forward_turn == 'source':
-                print(f"asm_source_hook triggered for module: {module.__class__.__name__}")
-                print(f"actmaps length: {len(self.actmaps_target)}")
+                #print(f"asm_source_hook triggered for module: {module.__class__.__name__}")
+                #print(f"actmaps length: {len(self.actmaps_target)}")
                 mask = self.actmaps_target.pop(0)
 
                 mask_bin = binarize(mask)
