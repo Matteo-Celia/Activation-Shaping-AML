@@ -72,7 +72,7 @@ class DAResNet18(nn.Module):
             self.forward_turn = 'source'
             print(len(self.actmaps_target),x_source.shape)
             z= self.resnet(x_source)
-            print('z {}'.format(z.requires_grad))
+            
             return z
     
     def rec_actmaps_hook(self, module, input, output):
@@ -115,6 +115,8 @@ class DGResNet18(nn.Module):
         self.rec_turn = 1
 
     def forward(self, x):
+
+        print(len(self.actmaps1,x.shape))
         return self.resnet(x)
 
     def rec_actmaps(self, x1, x2, x3):
