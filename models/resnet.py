@@ -116,7 +116,7 @@ class DGResNet18(nn.Module):
 
     def forward(self, x):
 
-        print(len(self.actmaps1,x.shape))
+        
         return self.resnet(x)
 
     def rec_actmaps(self, x1, x2, x3):

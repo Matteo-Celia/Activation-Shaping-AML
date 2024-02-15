@@ -93,10 +93,10 @@ def train(model: BaseResNet18, data):
                     x_source, y_source, x_target = x_source.to(CONFIG.device), y_source.to(CONFIG.device), \
                                                     x_target.to(CONFIG.device)
                     #record activation maps by forwarding target samples in eval mode:
-                    
+                    model.eval()
                     model.forward_target(x_target)
                     #apply activation maps during training
-                   
+                    model.train()
                     loss = F.cross_entropy(model(x_source), y_source)
 
                 elif CONFIG.experiment in ['domain_generalization']:
@@ -110,11 +110,11 @@ def train(model: BaseResNet18, data):
                     # Register forward hooks to record activation maps
                     hook_handles = []
                     hook_handles.append(model.resnet.layer4[0].bn1.register_forward_hook(model.rec_actmaps_hook))
-                    model.eval()
+                   
                     model.rec_actmaps(x1, x2, x3)
                     remove_forward_hooks(hook_handles)
                     hook_handles.clear()
-                    model.train()
+                    
                     # Register forward hooks to forward pass
                     hook_handles.append(model.resnet.layer4[0].bn1.register_forward_hook(model.asm_hook))
                     loss = F.cross_entropy(model(x), y)
