@@ -11,7 +11,7 @@ def binarize(tensor):
 def register_forward_hooks(model, hook, layer_type, skip_step=None):
     hook_handles = []
     layer_count = 0
-    for layer in model.modules():
+    for layer in model.resnet.modules():
         if isinstance(layer, layer_type):
             if skip_step is None:
                 hook_handles.append(layer.register_forward_hook(hook))
