@@ -66,7 +66,7 @@ def train(model: BaseResNet18, data):
         # Register forward hooks
         if CONFIG.experiment in ['random']:
             hook_handles = []
-            hook_handles = register_forward_hooks(model, asm_hook, nn.Conv2d,3) 
+            hook_handles = register_forward_hooks(model, asm_hook, nn.Conv2d) 
             #hook_handles.append(model.resnet.layer1[0].bn1.register_forward_hook(asm_hook))  
         elif CONFIG.experiment in ['domain_adaptation','DA-BA1','DA-BA2']:
             hook_handles = []
