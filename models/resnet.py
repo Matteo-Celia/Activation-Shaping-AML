@@ -28,7 +28,7 @@ def remove_forward_hooks(hook_handles):
 
 def asm_hook(module, input, output):
     #print(f"Activation hook triggered for module: {module.__class__.__name__}")
-    ratio = 0.75
+    ratio = 0
     p = torch.full_like(output, ratio)
     mask = torch.bernoulli(p)
     mask_bin = binarize(mask)
