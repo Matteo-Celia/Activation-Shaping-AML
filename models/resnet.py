@@ -33,7 +33,7 @@ def asm_hook(module, input, output):
     mask = torch.bernoulli(p)
     mask_bin = binarize(mask)
     output_bin = binarize(output)
-    return output_bin * mask_bin
+    return (output_bin * mask_bin)
 
 class BaseResNet18(nn.Module):
     def __init__(self):
@@ -102,7 +102,7 @@ class DAResNet18(nn.Module):
                     
                 output_bin = binarize(output)
                 output = output_bin * mask_bin
-                return output
+                return output.float()
             
 class DGResNet18(nn.Module):
     def __init__(self):
